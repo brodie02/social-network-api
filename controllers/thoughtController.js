@@ -7,7 +7,7 @@ module.exports = {
             .catch((err) => res.status(500).json(err))
     },
     getSingleThought(req, res) {
-        Thought.findOne({ _id: params.thoughtId })
+        Thought.findOne({ _id: req.params.thoughtId })
             .then((thought) =>
                 !thought
                     ? res.status(404).json({ message: 'No thought with that ID'})
@@ -51,7 +51,7 @@ module.exports = {
             .then((thought) =>
                 !thought
                 ? res.status(404).json({ message: 'No thought with that ID' })
-                : res.json(thought)
+                : res.json('Thought Deleted!')
             )
             .catch((err) => res.status(500).json(err))
     },
@@ -71,13 +71,13 @@ module.exports = {
     deleteReactionFromThought(req, res) {
         Thought.findOneAndUpdate(
             { _id: req.params.thoughtId },
-            { $pull: { reactions: req.params.reactionId } },
+            { $pull: { reactions: {reactionId: req.params.reactionId} } },
             { runValidators: true, new: true }
         )
             .then((thought) => 
                 !thought
                 ? res.status(404).json({ message: 'No thought with that ID'})
-                : res.json(thought)
+                : res.json('Reaction Deleted')
             )
             .catch((err) => res.status(500).json(err))
     }

@@ -7,7 +7,7 @@ module.exports = {
             .catch((err) => res.status(500).json(err))
     },
     getSingleUser(req, res) {
-        User.findOne({ _id: params.userId })
+        User.findOne({ _id: req.params.userId })
             .populate({ path: 'thoughts', select: '-__v' })
             .populate({ path: 'friends', select: '-__v' })
             .then((user) =>
@@ -37,10 +37,14 @@ module.exports = {
     },
     deleteUser(req, res) {
         User.findOneAndDelete({ _id: req.params.userId })
-            .then((user) =>
-                !user
-                ? res.status(404).json({ message: 'No user with that ID' })
-                : Thought.deleteMany({ _id: { $in: user.thoughts } })
+            .then((user) => {
+                if(!user) {
+                    res.status(404).json({ message: 'No user with that ID' })
+                } else {
+                    Thought.deleteMany({ _id: { $in: user.thoughts } }),
+                    res.json("User Deleted") 
+                }
+            }
             )
             .catch((err) => res.status(500).json(err))
     },
